@@ -1,4 +1,4 @@
-﻿local player = game.Players.LocalPlayer
+local player = game.Players.LocalPlayer
 local char = player.Character or player.CharacterAdded:Wait()
 local root = char:WaitForChild("HumanoidRootPart")
 
@@ -10,29 +10,35 @@ local speed = 50
 
 local bv
 local bg
+local flyConnection
 
 -- GUI
-local gui = Instance.new("ScreenGui", game.CoreGui)
+local gui = Instance.new("ScreenGui")
+gui.Parent = game.CoreGui
 
-local frame = Instance.new("Frame", gui)
+local frame = Instance.new("Frame")
+frame.Parent = gui
 frame.Size = UDim2.new(0,200,0,140)
 frame.Position = UDim2.new(0.5,-100,0.5,-70)
 frame.BackgroundColor3 = Color3.fromRGB(30,30,30)
 frame.Active = true
 frame.Draggable = true
 
-local title = Instance.new("TextLabel", frame)
+local title = Instance.new("TextLabel")
+title.Parent = frame
 title.Size = UDim2.new(1,0,0,30)
 title.Text = "Fly Hub"
 title.TextColor3 = Color3.new(1,1,1)
 title.BackgroundTransparency = 1
 
-local toggle = Instance.new("TextButton", frame)
+local toggle = Instance.new("TextButton")
+toggle.Parent = frame
 toggle.Size = UDim2.new(0.8,0,0,30)
 toggle.Position = UDim2.new(0.1,0,0,40)
 toggle.Text = "Activar Fly"
 
-local speedBox = Instance.new("TextBox", frame)
+local speedBox = Instance.new("TextBox")
+speedBox.Parent = frame
 speedBox.Size = UDim2.new(0.8,0,0,30)
 speedBox.Position = UDim2.new(0.1,0,0,80)
 speedBox.PlaceholderText = "Velocidad (ej: 50)"
@@ -52,7 +58,7 @@ local function startFly()
 	bg.CFrame = root.CFrame
 	bg.Parent = root
 
-	RunService.RenderStepped:Connect(function()
+	flyConnection = RunService.RenderStepped:Connect(function()
 
 		if flying then
 			bg.CFrame = workspace.CurrentCamera.CFrame
@@ -84,7 +90,6 @@ local function startFly()
 			end
 
 			bv.Velocity = move * speed
-
 		end
 
 	end)
@@ -95,8 +100,17 @@ local function stopFly()
 
 	flying = false
 
-	if bv then bv:Destroy() end
-	if bg then bg:Destroy() end
+	if flyConnection then
+		flyConnection:Disconnect()
+	end
+
+	if bv then
+		bv:Destroy()
+	end
+
+	if bg then
+		bg:Destroy()
+	end
 
 end
 
